@@ -150,7 +150,7 @@ with col_output:
                     st.image(final_image_bytes, caption="✨ النتيجة الفوتوغرافية السينمائية بذكاء Flux", use_container_width=True)
                     st.download_button(label="📥 تحميل البوستر بجودة عالية", data=final_image_bytes, file_name=f"{shop_name}_product.webp", mime="image/webp", key="download_poster_btn")
 
-                # زيادة الفاصل الزمن لتفادي الـ 429
+                # زيادة الفاصل الزمن لتفادي الـ 429 من ريبليك
                 time.sleep(5.0)
 
                 # --- المرحلة 3: فيديو الإعلان المتحرك (Stable Video Diffusion) ---
@@ -169,7 +169,7 @@ with col_output:
                     st.video(video_bytes)
                     st.download_button(label="📥 تحميل الفيديو الإعلاني (MP4)", data=video_bytes, file_name=f"{shop_name}_ad_video.mp4", mime="video/mp4", key="download_video_btn")
 
-                # زيادة الفاصل الزمني النهائي
+                # زيادة الفاصل الزمني النهائي لضمان مرور تراك الموسيقى بدون حظر
                 time.sleep(5.0)
                 audio_prompt = f"A commercial advertisement background music, {music_style}, high quality, loops, professional master, electronic beats"
 
@@ -177,4 +177,3 @@ with col_output:
                 st.write("")
                 with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي مخصص للحملة..."):
                     output_audio = rep_client.run(
-                        "meta/musicgen",
