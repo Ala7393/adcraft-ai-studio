@@ -4,20 +4,17 @@ import replicate
 import os
 
 # =======================================================
-# 1. حقن المفاتيح مباشرة بطريقة الحماية المزدوجة الصارمة
+# 1. جلب المفاتيح الصافية من خزنة السيرفر السحابي المحدثة
 # =======================================================
-# ⚠️ امسح العبارات التوضيحية بالأسفل وضع مفاتيحك الحقيقية الكاملة بدقة بين علامات التنصيص
-MY_GEMINI_KEY = "AQ.Ab8RN6INwwjInYGcOuKLzwKEuT5x9G9Y1DzPzL4De_7B-v9QWw"
-MY_REPLICATE_KEY = "r8_bseEfbvrNvBvEHnAqMIwBsDo68eFYLm2CA3di"
+MY_GEMINI_KEY = st.secrets["GEMINI_API_KEY"]
+MY_REPLICATE_KEY = st.secrets["REPLICATE_API_TOKEN"]
 
-# تسجيل المفاتيح في نواة بيئة نظام تشغيل السيرفر السحابي لحل مشاكل الـ 401
-os.environ["REPLICATE_API_TOKEN"] = MY_REPLICATE_KEY
-os.environ["GEMINI_API_KEY"] = MY_GEMINI_KEY
+# حقن المفاتيح في بيئة النظام لتأمين مكتبة ريبليك للفيديو والصوت
+os.environ["r8_bseEfbvrNvBvEHnAqMIwBsDo68eFYLm2CA3di"] = MY_REPLICATE_KEY
+os.environ["AQ.Ab8RN6INwwjInYGcOuKLzwKEuT5x9G9Y1DzPzL4De_7B-v9QWw"] = MY_GEMINI_KEY
 
-# ربط عميل جوجل برمجياً بالمفتاح المحقون
+# الربط البرمجي الصارم والآمن للعملاء
 client = genai.Client(api_key=MY_GEMINI_KEY)
-
-# ربط عميل ريبليك ثابت بشكل صريح لحماية قنوات اتصال السيرفرات السحابية
 rep_client = replicate.Client(api_token=MY_REPLICATE_KEY)
 
 # ==========================================
@@ -30,7 +27,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# تصميم بصري متقدم ومريح للعين باستخدام CSS لموقع متكامل
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -72,7 +68,7 @@ with col_input:
     with st.container():
         st.markdown("<h3 style='color: #059669; margin-top:0;'>🎯 2. هندسة الهوية الإعلانية</h3>", unsafe_allow_html=True)
         shop_name = st.text_input("🏪 اسم متجرك أو علامتك التجارية:", placeholder="مثال: لورا للأزياء")
-        product_name = st.text_input("📦 ما هو هذا المنتج؟ (الوصف):", placeholder="مثال: عطر ملكي فاخر برائحة العود")
+        product_name = st.text_input("📦 ما هو هذا المنتج？ (الوصف):", placeholder="مثال: عطر ملكي فاخر برائحة العود")
         
         col_sub1, col_sub2 = st.columns(2)
         with col_sub1:
@@ -103,7 +99,6 @@ with col_output:
                 with st.spinner("✍️ جاري صياغة النص الإعلاني الخاطف بأسلوب بشري..."):
                     system_prompt = f"أنت خبير تسويق رقمي محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
                     try:
-                        # جلب مباشر من الموديل المستقر لتفادي الـ 404
                         response = client.models.generate_content(model='gemini-2.5-flash', contents=system_prompt)
                         st.markdown("<b style='color:#10B981;'>📝 أولاً: نص الإعلان الجاهز للنسخ والنشر:</b>", unsafe_allow_html=True)
                         st.text_area("📋 انسخ النص التسويقي من هنا:", value=response.text, height=140)
@@ -112,11 +107,10 @@ with col_output:
 
                 image_url_string = None
 
-                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro عـبر rep_client الموثق) ---
+                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro) ---
                 st.write("")
                 with st.spinner("🖼️ ثانياً: جاري تشغيل ذكاء Flux لإنشاء صورة استوديو احترافية للمنتج..."):
                     try:
-                        # تشغيل الدالة مجبرة على استخدام الـ rep_client لمنع الـ 401
                         output_image = rep_client.run(
                             "black-forest-labs/flux-2-pro",
                             input={
@@ -134,13 +128,12 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine عبر rep_client الموثق) ---
+                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine) ---
                 st.write("")
                 with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك الصورة إلى فيديو إعلاني قصير..."):
                     try:
                         input_for_video = image_url_string if image_url_string else uploaded_file
                         
-                        # تشغيل دالة الفيديو مجبرة على الـ rep_client
                         output_video = rep_client.run(
                             "luma/dream-machine",
                             input={
@@ -153,11 +146,10 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
 
-                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (Meta MusicGen عبر rep_client الموثق) ---
+                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (Meta MusicGen) ---
                 st.write("")
                 with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي يناسب الحملة..."):
                     try:
-                        # تشغيل دالة الصوت مجبرة على الـ rep_client
                         output_audio = rep_client.run(
                             "meta/musicgen:7a76a825e58c11c5381117437a14be58d0dd99e3e3cf3e3870b92d6e4df46bc2",
                             input={
