@@ -4,15 +4,17 @@ import replicate
 import os
 
 # =======================================================
-# 1. حقن مفاتيح الـ API الحقيقية مباشرة لتجاوز مشاكل السيرفر
+# 1. حقن المفاتيح مباشرة في نواة نظام التشغيل لمنع الـ 401 نهائياً
 # =======================================================
 # استبدل النصوص بالأسفل بمفاتيحك الحقيقية الطويلة والكاملة بين علامات التنصيص
 MY_GEMINI_KEY = "AQ.Ab8RN6KfPqE_GmAqD_F_YLmVtU3xfD4SRX2Xh9G0uUX2Jc6P4w"
 MY_REPLICATE_KEY = "r8_Ahkun9cSqB46fdYHoYMhBvQQ0KywLYF1RvtUV"
 
-# الربط الصريح والآمن للعملاء برمجياً بضمان المفاتيح المحقونة
+# إجبار السيرفر قسراً على تسجيل رمز ريبليك في الذاكرة الحية
+os.environ["REPLICATE_API_TOKEN"] = MY_REPLICATE_KEY
+
+# الربط الصريح والآمن لعميل جوجل بضمان المفتاح المحقون
 client = genai.Client(api_key=MY_GEMINI_KEY)
-rep_client = replicate.Client(api_token=MY_REPLICATE_KEY)
 
 # ==========================================
 # 2. إعدادات واجهة المستخدم (Premium SaaS Theme)
@@ -105,11 +107,11 @@ with col_output:
 
                 image_url_string = None
 
-                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro عـبر rep_client الصارم) ---
+                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro) ---
                 st.write("")
                 with st.spinner("🖼️ ثانياً: جاري تشغيل ذكاء Flux لإنشاء صورة استوديو احترافية للمنتج..."):
                     try:
-                        output_image = rep_client.run(
+                        output_image = replicate.run(
                             "black-forest-labs/flux-2-pro",
                             input={
                                 "prompt": f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, cinematic lighting, 8k resolution",
@@ -126,13 +128,13 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine عبر rep_client الصارم) ---
+                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine) ---
                 st.write("")
                 with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك الصورة إلى فيديو إعلاني قصير..."):
                     try:
                         input_for_video = image_url_string if image_url_string else uploaded_file
                         
-                        output_video = rep_client.run(
+                        output_video = replicate.run(
                             "luma/dream-machine",
                             input={
                                 "prompt": f"Cinematic slow motion camera movement around this product {product_name}, professional product advertisement video, commercial concept",
@@ -144,11 +146,11 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
 
-                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (Meta MusicGen عبر rep_client الصارم) ---
+                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (Meta MusicGen) ---
                 st.write("")
                 with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي يناسب الحملة..."):
                     try:
-                        output_audio = rep_client.run(
+                        output_audio = replicate.run(
                             "meta/musicgen:7a76a825e58c11c5381117437a14be58d0dd99e3e3cf3e3870b92d6e4df46bc2",
                             input={
                                 "prompt": f"A commercial advertisement background music, {music_style}, high quality, loops, professional master, electronic beats",
