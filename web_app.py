@@ -2,20 +2,19 @@ import streamlit as st
 from google import genai
 import replicate
 import os
-import time
 
 # ==========================================
-# 1. إعداد جلب مفاتيح الـ API بشكل آمن ومخفي
+# 1. إعداد جلب مفاتيح الـ API بشكل آمن وصحيح 100%
 # ==========================================
 MY_GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 MY_REPLICATE_KEY = os.environ.get("REPLICATE_API_TOKEN")
 
-# تفعيل ربط عملاء الذكاء الاصطناعي برمجياً
+# الربط الصريح والآمن لحل مشكلة الـ 401 والتأكيد للسيرفر
 client = genai.Client(api_key=MY_GEMINI_KEY)
-os.environ["REPLICATE_API_TOKEN"] = MY_REPLICATE_KEY
+replicate_client = replicate.Client(api_token=MY_REPLICATE_KEY)
 
 # ==========================================
-# 2. إعدادات واجهة المستخدم (تنسيق مخصص وعصري)
+# 2. إعدادات واجهة المستخدم (التصميم العصري)
 # ==========================================
 st.set_page_config(
     page_title="AdCraft AI | استوديو التجار الذكي", 
@@ -24,7 +23,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# تصميم بصري متقدم ومريح للعين باستخدام CSS
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -39,9 +37,7 @@ st.markdown("""
         font-weight: 600 !important; font-size: 16px !important; width: 100% !important; border: none !important;
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); transition: all 0.3s ease !important;
     }
-    .stButton>button:hover {
-        transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
-    }
+    .stButton>button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3); }
     .stTextInput>div>div>input, .stSelectbox>div>div>div { border-radius: 8px !important; border: 1px solid #E2E8F0 !important; }
     .stFileUploader { border: 2px dashed #CBD5E1 !important; border-radius: 12px !important; background-color: #F8FAFC !important; }
     </style>
@@ -56,19 +52,14 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-st.write("")
-
-# تقسيم الشاشة
 col_input, col_output = st.columns([1, 1.1], gap="large")
 
 with col_input:
     with st.container():
-        st.markdown("<h3 style='color: #1E3A8A; margin-top:0;'>📸 1. معرض صور المنتج</h3>", unsafe_allow_html=True)
-        uploaded_file = st.file_uploader("قم بسحب وإفلات صورة منتجك الحقيقي هنا (JPG, PNG):", type=["png", "jpg", "jpeg"])
-        
+        st.markdown("<h3 style='color: #1E3A8A; margin-top:0;'>📸 1. معرض صور...</h3>", unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("قم بسحب وإفلات صورة منتجك هنا (JPG, PNG):", type=["png", "jpg", "jpeg"])
         if uploaded_file is not None:
-            st.markdown("---")
-            st.image(uploaded_file, caption="الصورة الأصلية المرفوعة للمنتج", use_container_width=True)
+            st.image(uploaded_file, caption="الصورة الأصلية", use_container_width=True)
 
     with st.container():
         st.markdown("<h3 style='color: #1E3A8A; margin-top:0;'>🎯 2. هندسة الحملة الإعلانية</h3>", unsafe_allow_html=True)
@@ -77,80 +68,73 @@ with col_input:
         
         col_sub1, col_sub2 = st.columns(2)
         with col_sub1:
-            platform = st.selectbox("📱 منصة الإعلان الرئيسية:", ["تيك توك (TikTok)", "انستغرام (Instagram)", "سناب شات (Snapchat)"])
+            platform = st.selectbox("📱 منصة الإعلان الرئيسية:", ["تيك توك (TikTok)", "انستغرام (Instagram)"])
         with col_sub2:
-            dialect = st.selectbox("🗣️ اللهجة الصوتية المستهدفة:", ["عامية سعودية الخليجية", "عامية مصرية خفيفة", "فصحى مبسطة وجذابة"])
+            dialect = st.selectbox("🗣️ اللهجة الصوتية المستهدفة:", ["عامية سعودية الخليجية", "عامية مصرية خفيفة"])
     
     with st.container():
         st.markdown("<h3 style='color: #1E3A8A; margin-top:0;'>⚡ 3. الخدمات المطلوبة</h3>", unsafe_allow_html=True)
-        enhance_bg = st.checkbox("🖼️ توليد صورة استوديو إعلاني احترافي بذكاء Flux-2 Pro", value=True)
-        convert_to_video = st.checkbox("🎥 بث الحياة في الصورة وتحويلها لفيديو سينمائي متحرك", value=False)
-        st.write("")
+        enhance_bg = st.checkbox("🖼️ توليد صورة استوديو إعلاني احترافي بذكاء Flux", value=True)
+        convert_to_video = st.checkbox("🎥 تحويل الصورة لفيديو سينمائي متحرك", value=False)
         submit_btn = st.button("🚀 ابدأ المعالجة الذكية والإنتاج")
 
 with col_output:
     with st.container():
         st.markdown("<h3 style='color: #0F172A; margin-top:0;'>📋 استوديو المخرجات الاحترافية</h3>", unsafe_allow_html=True)
-        st.write("النتائج وحملاتك التسويقية ستظهر هنا فور الضغط على زر المعالجة.")
+        st.write("النتائج وحملاتك التسويقية ستظهر هنا فوراً.")
         st.write("---")
         
         if submit_btn:
             if shop_name and product_name and uploaded_file is not None:
                 
-                # --- المرحلة 1: النص الإعلاني الذكي (تم التغيير إلى النسخة المستقرة 1.5 الفعالة) ---
-                with st.spinner("✍️ جاري صياغة النص الإعلاني بأسلوب تسويقي خطّاف..."):
-                    system_prompt = f"""
-                    أنت خبير تسويق رقمي محترف ومبدع جداً في كتابة الإعلانات البيعية (Copywriter).
-                    قم بكتابة نص إعلاني جذاب جداً لمنصة ({platform}) بناءً على: متجر {shop_name}، منتج {product_name}، بلهجة {dialect}.
-                    ابدأ بجملة خطافة، ركز على الفوائد، استخدم الإيموجي، واختم بدعوة واضحة لاتخاذ إجراء مع 5 هاشتاجات مناسبة.
-                    """
+                # --- المرحلة 1: النص الإعلاني (استخدام التسمية الرسمية الصحيحة للمكتبة) ---
+                with st.spinner("✍️ جاري صياغة النص الإعلاني بأسلوب تسويقي..."):
+                    system_prompt = f"أنت خبير تسويق محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
                     try:
-                        # استخدام نموذج 1.5 فلاش المستقر لتفادي خطأ 503 تماماً
-                        response = client.models.generate_content(model='gemini-1.5-flash', contents=system_prompt)
+                        # التسمية الصحيحة المباشرة بدون بادئة لمنع خطأ 404
+                        response = client.models.generate_content(model='gemini-2.5-flash', contents=system_prompt)
                         st.markdown("<b style='color:#10B981;'>✅ تم صياغة النص الإعلاني بنجاح:</b>", unsafe_allow_html=True)
-                        st.text_area("📋 نص الإعلان الجاهز للنسخ والاستخدام:", value=response.text, height=180)
+                        st.text_area("📋 نص الإعلان الجاهز:", value=response.text, height=150)
                     except Exception as e:
                         st.error(f"خطأ في توليد النص: {e}")
 
                 final_image_url = None
 
-                # --- المرحلة 2: توليد الصورة الاحترافية بذكاء Flux-2 Pro الحقيقي من السيرفر ---
+                # --- المرحلة 2: توليد الصورة بـ Flux الحقيقي عبر الـ Client المخصص لإلغاء الـ 401 ---
                 if enhance_bg:
                     st.write("")
-                    with st.spinner("🖼️ جاري دمج تفاصيل منتجك مع ذكاء Flux-2 Pro لبناء استوديو إعلاني فاخر..."):
+                    with st.spinner("🖼️ جاري تشغيل ذكاء Flux لبناء الاستوديو الإعلاني..."):
                         try:
-                            # تشغيل نموذج Flux-2 Pro الحقيقي بناءً على توثيق المنصة الذي نسخته
-                            output_image = replicate.run(
+                            # استخدام العميل الموثق لمنع مشاكل الصلاحيات
+                            output_image = replicate_client.run(
                                 "black-forest-labs/flux-2-pro",
                                 input={
-                                    "prompt": f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, dramatic cinematic lighting, clean focused depth of field, 8k resolution, ultra-detailed masterpiece",
+                                    "prompt": f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, cinematic lighting, 8k resolution",
                                     "resolution": "1 MP",
                                     "aspect_ratio": "1:1",
-                                    "output_format": "webp",
-                                    "output_quality": 90
+                                    "output_format": "webp"
                                 }
                             )
-                            # استقبال رابط الصورة الناتج من السيرفر وعرضه
                             final_image_url = output_image
-                            st.markdown("<b style='color:#10B981;'>✅ تم توليد التصميم البصري الخارق بذكاء Flux-2 Pro:</b>", unsafe_allow_html=True)
-                            st.image(final_image_url, caption="✨ النتيجة الحقيقية لمنتجك بدقة سينمائية كاملة", use_container_width=True)
+                            st.markdown("<b style='color:#10B981;'>✅ تم توليد التصميم البصري بنجاح:</b>", unsafe_allow_html=True)
+                            st.image(final_image_url, caption="✨ النتيجة السينمائية الحقيقية", use_container_width=True)
                         except Exception as e:
                             st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
                 # --- المرحلة 3: تحويل صورة المنتج لفيديو متحرك ---
                 if convert_to_video:
                     st.write("")
-                    with st.spinner("🎥 جاري تحريك المشهد وبث الحياة في إضاءة ومحيط المنتج..."):
+                    with st.spinner("🎥 جاري تحريك المشهد وضبط تأثيرات الكاميرا السينمائية..."):
                         try:
                             image_to_animate = final_image_url if final_image_url else uploaded_file
-                            output_video = replicate.run(
+                            output_video = replicate_client.run(
                                 "stability-ai/stable-video-diffusion:3f2d6c5b9f3b3920db22dee2905cc380e8e4544d6c5b9f3b3920db22dee2905cc380e",
                                 input={
                                     "input_image": image_to_animate,
                                     "video_length": "14_frames_with_svd_xt"
                                 }
                             )
-                            st.markdown("<b style='color:#10B981;'>✅ فيديو الإعلان السينمائي القصير جاهز:</b>", unsafe_allow_html=True)
+                            st.markdown("<b style='color:#10B981;'>✅ فيديو الإعلان القصير جاهز:</b>", unsafe_allow_html=True)
                             st.video(output_video)
                         except Exception as e:
                             st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
