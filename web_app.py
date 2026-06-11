@@ -11,7 +11,6 @@ MY_REPLICATE_KEY = os.environ.get("REPLICATE_API_TOKEN")
 
 # الربط الصريح والآمن للسيرفر السحابي
 client = genai.Client(api_key=MY_GEMINI_KEY)
-replicate_client = replicate.Client(api_token=MY_REPLICATE_KEY)
 
 # ==========================================
 # 2. إعدادات واجهة المستخدم (التصميم العصري)
@@ -88,11 +87,12 @@ with col_output:
         if submit_btn:
             if shop_name and product_name and uploaded_file is not None:
                 
-                # --- المرحلة 1: النص الإعلاني (Gemini) ---
+                # --- المرحلة 1: النص الإعلاني (استخدام التسمية البديلة المستقرة لتجنب حصة الـ 429) ---
                 with st.spinner("✍️ جاري صياغة النص الإعلاني بأسلوب تسويقي..."):
                     system_prompt = f"أنت خبير تسويق محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
                     try:
-                        response = client.models.generate_content(model='gemini-2.0-flash', contents=system_prompt)
+                        # تبديل ذكي لنموذج gemini-1.5-flash لضمان الحصة ومقاومة ضغط الفحص المتكرر
+                        response = client.models.generate_content(model='gemini-1.5-flash', contents=system_prompt)
                         st.markdown("<b style='color:#10B981;'>✅ تم صياغة النص الإعلاني بنجاح:</b>", unsafe_allow_html=True)
                         st.text_area("📋 نص الإعلان الجاهز:", value=response.text, height=150)
                     except Exception as e:
@@ -105,8 +105,10 @@ with col_output:
                     st.write("")
                     with st.spinner("🖼️ جاري تشغيل ذكاء Flux لبناء الاستوديو الإعلاني الفاخر..."):
                         try:
-                            output_image = replicate_client.run(
+                            # حل جذري: تمرير الـ token مباشرة داخل الدالة لمنع أي فقدان للمصادقة السحابية
+                            output_image = replicate.run(
                                 "black-forest-labs/flux-2-pro",
+                                api_token=MY_REPLICATE_KEY,
                                 input={
                                     "prompt": f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, cinematic lighting, 8k resolution",
                                     "resolution": "1 MP",
@@ -114,7 +116,6 @@ with col_output:
                                     "output_format": "webp"
                                 }
                             )
-                            # قراءة الرابط كنص مخصص لتمهيده للفيديو بسلام
                             image_url_string = str(output_image)
                             final_image_bytes = output_image.read()
                             
@@ -123,17 +124,18 @@ with col_output:
                         except Exception as e:
                             st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: تحويل صورة المنتج لفيديو متحرك حقيقي عبر الـ client الموثق الصارم ---
+                # --- المرحلة 3: تحويل صورة المنتج لفيديو متحرك حقيقي بدون أخطاء مصادقة ---
                 if convert_to_video:
                     st.write("")
                     with st.spinner("🎥 جاري تحريك المشهد وضبط تأثيرات الكاميرا السينمائية..."):
                         try:
-                            # إذا لم تتوفر صورة معدلة نستخدم ملف العميل الأصلي مباشرة بعد قراءة الرابط
+                            # استخدام الرابط النصي الصافي أو كائن الملف الصالح
                             input_for_video = image_url_string if image_url_string else uploaded_file
 
-                            # تصحيح صارم: تمرير الطلب عبر replicate_client لحل مشكلة الـ 401 للفيديو
-                            output_video = replicate_client.run(
+                            # تمرير الـ token بشكل إجباري ومباشر هنا لحل مشكلة الـ 401 القاطعة للفيديو
+                            output_video = replicate.run(
                                 "stability-ai/stable-video-diffusion:3f2d6c5b9f3b3920db22dee2905cc380e8e4544d6c5b9f3b3920db22dee2905cc380e",
+                                api_token=MY_REPLICATE_KEY,
                                 input={
                                     "input_image": input_for_video,
                                     "video_length": "14_frames_with_svd_xt"
