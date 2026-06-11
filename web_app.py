@@ -3,16 +3,15 @@ from google import genai
 import replicate
 import os
 
-# ==========================================
-# 1. إعداد جلب مفاتيح الـ API بشكل آمن وصحيح 100%
-# ==========================================
-MY_GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
-MY_REPLICATE_KEY = os.environ.get("REPLICATE_API_TOKEN")
+# =======================================================
+# 1. حقن مفاتيح الـ API الحقيقية مباشرة لتجاوز مشاكل السيرفر
+# =======================================================
+# استبدل النصوص بالأسفل بمفاتيحك الحقيقية الطويلة والكاملة بين علامات التنصيص
+MY_GEMINI_KEY = "AQ.Ab8RN6KfPqE_GmAqD_F_YLmVtU3xfD4SRX2Xh9G0uUX2Jc6P4w"
+MY_REPLICATE_KEY = "r8_Ahkun9cSqB46fdYHoYMhBvQQ0KywLYF1RvtUV"
 
-# الربط الصريح والآمن للسيرفر السحابي لمنع أخطاء المصادقة
+# الربط الصريح والآمن للعملاء برمجياً بضمان المفاتيح المحقونة
 client = genai.Client(api_key=MY_GEMINI_KEY)
-
-# الحل الجذري للـ 401: إنشاء عميل ريبليك ثابت وموثق لاستخدامه في كافة الدوال
 rep_client = replicate.Client(api_token=MY_REPLICATE_KEY)
 
 # ==========================================
@@ -25,6 +24,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# تصميم بصري متقدم ومريح للعين باستخدام CSS لموقع متكامل
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -109,7 +109,6 @@ with col_output:
                 st.write("")
                 with st.spinner("🖼️ ثانياً: جاري تشغيل ذكاء Flux لإنشاء صورة استوديو احترافية للمنتج..."):
                     try:
-                        # تشغيل الدالة مجبرة على استخدام الـ rep_client لمنع الـ 401
                         output_image = rep_client.run(
                             "black-forest-labs/flux-2-pro",
                             input={
@@ -133,7 +132,6 @@ with col_output:
                     try:
                         input_for_video = image_url_string if image_url_string else uploaded_file
                         
-                        # تشغيل دالة الفيديو مجبرة على الاعتماد الصريح للعميل لمنع الـ 401 للفيديو
                         output_video = rep_client.run(
                             "luma/dream-machine",
                             input={
@@ -141,7 +139,7 @@ with col_output:
                                 "image": input_for_video
                             }
                         )
-                        st.markdown("<b style='color:#10B981;'>🎥 rالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</b>", unsafe_allow_html=True)
+                        st.markdown("<b style='color:#10B981;'>🎥 ثالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</b>", unsafe_allow_html=True)
                         st.video(output_video.read())
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
@@ -150,7 +148,6 @@ with col_output:
                 st.write("")
                 with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي يناسب الحملة..."):
                     try:
-                        # تشغيل دالة الصوت مجبرة على العميل الموثق لمنع الـ 401 للصوت
                         output_audio = rep_client.run(
                             "meta/musicgen:7a76a825e58c11c5381117437a14be58d0dd99e3e3cf3e3870b92d6e4df46bc2",
                             input={
