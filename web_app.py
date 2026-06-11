@@ -40,7 +40,7 @@ st.markdown("""
         background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
         color: white !important; border-radius: 12px !important; padding: 16px 32px !important;
         font-weight: 700 !important; font-size: 18px !important; width: 100% !important; border: none !important;
-        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3) !important; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2) !important; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     .stButton>button:hover {
         transform: translateY(-3px); box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.4) !important;
@@ -163,7 +163,7 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # زيادة الفاصل الزمني لتفادي الـ 429
+                # زيادة الفاصل الزمن للتنفس من ريبليك
                 time.sleep(5.0)
 
                 # --- المرحلة 3: فيديو الإعلان المتحرك (Stable Video Diffusion) ---
@@ -171,7 +171,6 @@ with col_output:
                 with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك البوستر إلى فيديو إعلاني قصير..."):
                     try:
                         input_for_video = image_url_string if image_url_string else uploaded_file
-                        
                         output_video = rep_client.run(
                             "stability-ai/stable-video-diffusion",
                             input={
@@ -180,7 +179,7 @@ with col_output:
                             }
                         )
                         video_bytes = output_video.read()
-                        st.markdown("<div style='background-color: #ecfdf5; padding: 12px; border-radius: 8px; color: #065f46; font-weight: bold;'>🎥 ثالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</div>", unsafe_allow_html=True)
+                        st.markdown("<div style='background-color: #ecfdf5; padding: 12px; border-radius: 8px; color: #065f46; font-weight: bold;'>🎥开启 ثالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</div>", unsafe_allow_html=True)
                         st.video(video_bytes)
                         st.download_button(label="📥 تحميل الفيديو الإعلاني (MP4)", data=video_bytes, file_name=f"{shop_name}_ad_video.mp4", mime="video/mp4")
                     except Exception as e:
