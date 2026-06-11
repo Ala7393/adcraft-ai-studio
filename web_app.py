@@ -87,19 +87,21 @@ with col_output:
         if submit_btn:
             if shop_name and product_name and uploaded_file is not None:
                 
-                # --- المرحلة 1: النص الإعلاني (Gemini) ---
+                # --- المرحلة 1: النص الإعلاني (تم التحديث لنموذج جيل 2.0 المستقر والثابت) ---
                 with st.spinner("✍️ جاري صياغة النص الإعلاني بأسلوب تسويقي..."):
                     system_prompt = f"أنت خبير تسويق محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
                     try:
-                        response = client.models.generate_content(model='gemini-2.5-flash', contents=system_prompt)
+                        # التبديل لنموذج gemini-2.0-flash المستقر والجاهز للأعمال لحل مشكلة الـ 503
+                        response = client.models.generate_content(model='gemini-2.0-flash', contents=system_prompt)
                         st.markdown("<b style='color:#10B981;'>✅ تم صياغة النص الإعلاني بنجاح:</b>", unsafe_allow_html=True)
                         st.text_area("📋 نص الإعلان الجاهز:", value=response.text, height=150)
                     except Exception as e:
                         st.error(f"خطأ في توليد النص: {e}")
 
-                final_image_bytes = None
+                # حفظ الرابط الأصلي الذي يخرجه سيرفر ريبليك لتمريره كـ JSON صالح للفيديو
+                image_url_string = None
 
-                # --- المرحلة 2: توليد الصورة بـ Flux وقراءة بايتات الملف حقيقياً لإلغاء خطأ الـ format ---
+                # --- المرحلة 2: توليد الصورة بـ Flux وعرضها ---
                 if enhance_bg:
                     st.write("")
                     with st.spinner("🖼️ جاري تشغيل ذكاء Flux لبناء الاستوديو الإعلاني الفاخر..."):
@@ -113,29 +115,36 @@ with col_output:
                                     "output_format": "webp"
                                 }
                             )
-                            # الحل الجذري: قراءة بايتات كائن FileOutput مباشرة ليتم عرضها بسلام
+                            # ميزة ريبليك الاحترافية: الكائن المحتوي على السلسلة النصية للرابط نقرأه هنا
+                            image_url_string = str(output_image)
+                            
+                            # نقرأ البايتات فقط للعرض الفوري الآمن داخل موقع ستريمليت
                             final_image_bytes = output_image.read()
+                            
                             st.markdown("<b style='color:#10B981;'>✅ تم توليد التصميم البصري بنجاح:</b>", unsafe_allow_html=True)
                             st.image(final_image_bytes, caption="✨ النتيجة السينمائية الحقيقية بذكاء Flux", use_container_width=True)
                         except Exception as e:
                             st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: تحويل صورة المنتج لفيديو متحرك حقيقي ---
+                # --- المرحلة 3: تحويل صورة المنتج لفيديو متحرك حقيقي (باستخدام الرابط النصي الصالح لـ JSON) ---
                 if convert_to_video:
                     st.write("")
                     with st.spinner("🎥 جاري تحريك المشهد وضبط تأثيرات الكاميرا السينمائية..."):
                         try:
-                            # نستخدم الصورة المولدة حديثاً أو ملف العميل الأصلي
-                            image_to_animate = final_image_bytes if final_image_bytes else uploaded_file.read()
+                            # إذا تم توليد الصورة نرسل رابطها النصي، وإذا لم تتوفر نرسل الملف الأصلي المرفوع
+                            if image_url_string:
+                                input_for_video = image_url_string
+                            else:
+                                input_for_video = uploaded_file
+
                             output_video = replicate_client.run(
                                 "stability-ai/stable-video-diffusion:3f2d6c5b9f3b3920db22dee2905cc380e8e4544d6c5b9f3b3920db22dee2905cc380e",
                                 input={
-                                    "input_image": image_to_animate,
+                                    "input_image": input_for_video,
                                     "video_length": "14_frames_with_svd_xt"
                                 }
                             )
                             st.markdown("<b style='color:#10B981;'>✅ فيديو الإعلان القصير جاهز:</b>", unsafe_allow_html=True)
-                            # قراءة بايتات الفيديو لضمان عرضه بدون أخطاء السيرفر
                             st.video(output_video.read())
                         except Exception as e:
                             st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
