@@ -4,14 +4,15 @@ import replicate
 import os
 
 # =======================================================
-# 1. جلب المفاتيح الصافية من خزنة السيرفر السحابي المحدثة
+# 1. جلب المفاتيح الصافية والآمنة من خزنة السيرفر السحابي
 # =======================================================
+# هذا التعديل يسمح بجعل مستودع GitHub عاماً (Public) بأمان تام 100%
 MY_GEMINI_KEY = st.secrets["GEMINI_API_KEY"]
 MY_REPLICATE_KEY = st.secrets["REPLICATE_API_TOKEN"]
 
-# حقن المفاتيح في بيئة النظام لتأمين مكتبة ريبليك للفيديو والصوت
-os.environ["r8_bseEfbvrNvBvEHnAqMIwBsDo68eFYLm2CA3di"] = MY_REPLICATE_KEY
-os.environ["AQ.Ab8RN6INwwjInYGcOuKLzwKEuT5x9G9Y1DzPzL4De_7B-v9QWw"] = MY_GEMINI_KEY
+# حقن المفاتيح في بيئة النظام لتأمين قنوات اتصال المكتبات بالسيرفر
+os.environ["REPLICATE_API_TOKEN"] = MY_REPLICATE_KEY
+os.environ["GEMINI_API_KEY"] = MY_GEMINI_KEY
 
 # الربط البرمجي الصارم والآمن للعملاء
 client = genai.Client(api_key=MY_GEMINI_KEY)
@@ -27,6 +28,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# تصميم بصري متقدم ومريح للعين باستخدام CSS لموقع متكامل
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -68,7 +70,7 @@ with col_input:
     with st.container():
         st.markdown("<h3 style='color: #059669; margin-top:0;'>🎯 2. هندسة الهوية الإعلانية</h3>", unsafe_allow_html=True)
         shop_name = st.text_input("🏪 اسم متجرك أو علامتك التجارية:", placeholder="مثال: لورا للأزياء")
-        product_name = st.text_input("📦 ما هو هذا المنتج？ (الوصف):", placeholder="مثال: عطر ملكي فاخر برائحة العود")
+        product_name = st.text_input("📦 ما هو هذا المنتج؟ (الوصف):", placeholder="مثال: عطر ملكي فاخر برائحة العود")
         
         col_sub1, col_sub2 = st.columns(2)
         with col_sub1:
@@ -95,7 +97,7 @@ with col_output:
         if submit_btn:
             if shop_name and product_name and uploaded_file is not None:
                 
-                # --- المرحلة 1: النص التسويقي المقنع (Gemini) ---
+                # --- المرحلة 1: النص التسويقي المقنع (Gemini 2.5 المستقر) ---
                 with st.spinner("✍️ جاري صياغة النص الإعلاني الخاطف بأسلوب بشري..."):
                     system_prompt = f"أنت خبير تسويق رقمي محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
                     try:
@@ -107,7 +109,7 @@ with col_output:
 
                 image_url_string = None
 
-                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro) ---
+                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro عـبر rep_client الموثق) ---
                 st.write("")
                 with st.spinner("🖼️ ثانياً: جاري تشغيل ذكاء Flux لإنشاء صورة استوديو احترافية للمنتج..."):
                     try:
@@ -128,7 +130,7 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine) ---
+                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine عبر rep_client الموثق) ---
                 st.write("")
                 with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك الصورة إلى فيديو إعلاني قصير..."):
                     try:
@@ -146,7 +148,7 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
 
-                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (Meta MusicGen) ---
+                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (Meta MusicGen عبر rep_client الموثق) ---
                 st.write("")
                 with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي يناسب الحملة..."):
                     try:
