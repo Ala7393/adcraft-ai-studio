@@ -134,10 +134,13 @@ with col_output:
                 # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro) ---
                 st.write("")
                 with st.spinner("🖼️ ثانياً: جاري تشغيل ذكاء Flux لإنشاء صورة استوديو احترافية..."):
+                    # صياغة النص البرمجي بشكل منفصل لمنع تداخل الأقواس وعلامات التنصيص الـ JSON
+                    flux_prompt = f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, cinematic lighting, 8k resolution"
+                    
                     output_image = rep_client.run(
                         "black-forest-labs/flux-2-pro",
                         input={
-                            "prompt": f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, cinematic lighting, 8k resolution",
+                            "prompt": flux_prompt,
                             "resolution": "1 MP",
                             "aspect_ratio": "1:1",
                             "output_format": "webp"
@@ -174,7 +177,4 @@ with col_output:
                 # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (MusicGen) ---
                 st.write("")
                 with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي مخصص للحملة..."):
-                    output_audio = rep_client.run(
-                        "meta/musicgen",
-                        input={
-                            "prompt": f"A commercial advertisement background music, {music_style}, high quality, loops, professional master, electronic beats",
+                    # صياغة نص الموسيقى بشكل منفصل هندسياً منعا لأي تداخل للأقواس
