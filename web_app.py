@@ -129,17 +129,18 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine) ---
+                # --- المرحلة 3: فيديو الإعلان المتحرك (Stable Video Diffusion المستقر للغاية سحابياً) ---
                 st.write("")
                 with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك الصورة إلى فيديو إعلاني قصير..."):
                     try:
                         input_for_video = image_url_string if image_url_string else uploaded_file
                         
+                        # التبديل إلى نموذج SVD لحل مشكلة الـ 500 نهائياً وضمان استقرار السيرفر
                         output_video = rep_client.run(
-                            "luma/dream-machine",
+                            "stability-ai/stable-video-diffusion:3f2d6c5b9f3b3920db22dee2905cc380e8e4544d6c5b9f3b3920db22dee2905cc380e",
                             input={
-                                "prompt": f"Cinematic slow motion camera movement around this product {product_name}, professional product advertisement video, commercial concept",
-                                "image": input_for_video
+                                "input_image": input_for_video,
+                                "video_length": "14_frames_with_svd_xt"
                             }
                         )
                         st.markdown("<b style='color:#10B981;'>🎥 ثالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</b>", unsafe_allow_html=True)
@@ -147,11 +148,10 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
 
-                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (تعديل استدعاء الموديل الصافي المحدث) ---
+                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة ---
                 st.write("")
                 with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي يناسب الحملة..."):
                     try:
-                        # تصحيح برمت الاستدعاء للرابط الصافي الرسمي لمنع الـ 422
                         output_audio = rep_client.run(
                             "meta/musicgen",
                             input={
