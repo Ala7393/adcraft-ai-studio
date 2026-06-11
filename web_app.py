@@ -2,6 +2,7 @@ import streamlit as st
 from google import genai
 import replicate
 import os
+import time  # مكتبة الفواصل الزمنية لحل مشكلة الـ 429
 
 # =======================================================
 # 1. جلب المفاتيح الصافية والآمنة من خزنة السيرفر السحابي
@@ -129,13 +130,15 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
+                # الفاصل الزمني الأول: تهدئة السيرفر وتفادي الـ 429 للصورة والفيديو
+                time.sleep(3.5)
+
                 # --- المرحلة 3: فيديو الإعلان المتحرك (Stable Video Diffusion المستقر للغاية سحابياً) ---
                 st.write("")
                 with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك الصورة إلى فيديو إعلاني قصير..."):
                     try:
                         input_for_video = image_url_string if image_url_string else uploaded_file
                         
-                        # التبديل إلى نموذج SVD لحل مشكلة الـ 500 نهائياً وضمان استقرار السيرفر
                         output_video = rep_client.run(
                             "stability-ai/stable-video-diffusion:3f2d6c5b9f3b3920db22dee2905cc380e8e4544d6c5b9f3b3920db22dee2905cc380e",
                             input={
@@ -147,6 +150,9 @@ with col_output:
                         st.video(output_video.read())
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
+
+                # الفاصل الزمني الثاني: تهدئة السيرفر وتفادي الـ 429 للفيديو والصوت
+                time.sleep(3.5)
 
                 # --- المرحلة 4: الموسيقى الإعلانية المتوافقة ---
                 st.write("")
