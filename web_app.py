@@ -130,17 +130,18 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # الفاصل الزمني الأول: تهدئة السيرفر وتفادي الـ 429 للصورة والفيديو
-                time.sleep(3.5)
+                # زيادة الفاصل الزمني لتهدئة السيرفر وتفادي الـ 429
+                time.sleep(5.0)
 
-                # --- المرحلة 3: فيديو الإعلان المتحرك (Stable Video Diffusion المستقر للغاية سحابياً) ---
+                # --- المرحلة 3: فيديو الإعلان المتحرك (تصحيح الرابط الرسمي الصافي لمنع الـ 422) ---
                 st.write("")
                 with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك الصورة إلى فيديو إعلاني قصير..."):
                     try:
                         input_for_video = image_url_string if image_url_string else uploaded_file
                         
+                        # استخدام الرابط الرسمي الصافي والحديث والمستقر للنموذج لمنع الـ 422
                         output_video = rep_client.run(
-                            "stability-ai/stable-video-diffusion:3f2d6c5b9f3b3920db22dee2905cc380e8e4544d6c5b9f3b3920db22dee2905cc380e",
+                            "stability-ai/stable-video-diffusion",
                             input={
                                 "input_image": input_for_video,
                                 "video_length": "14_frames_with_svd_xt"
@@ -151,8 +152,8 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
 
-                # الفاصل الزمني الثاني: تهدئة السيرفر وتفادي الـ 429 للفيديو والصوت
-                time.sleep(3.5)
+                # زيادة الفاصل الزمني النهائي لضمان مرور تراك الموسيقى بدون حظر
+                time.sleep(5.0)
 
                 # --- المرحلة 4: الموسيقى الإعلانية المتوافقة ---
                 st.write("")
