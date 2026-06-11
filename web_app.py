@@ -156,14 +156,13 @@ with col_output:
                         )
                         image_url_string = str(output_image)
                         final_image_bytes = output_image.read()
-                        
                         st.markdown("<div style='background-color: #ecfdf5; padding: 12px; border-radius: 8px; color: #065f46; font-weight: bold;'>🖼️ ثانياً: البوستر الإعلاني الاحترافي لمنتجك:</div>", unsafe_allow_html=True)
                         st.image(final_image_bytes, caption="✨ النتيجة الفوتوغرافية السينمائية بذكاء Flux", use_container_width=True)
                         st.download_button(label="📥 تحميل البوستر بجودة عالية", data=final_image_bytes, file_name=f"{shop_name}_product.webp", mime="image/webp")
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # زيادة الفاصل الزمن للتنفس من ريبليك
+                # زيادة الفاصل الزمن لتفادي الـ 429
                 time.sleep(5.0)
 
                 # --- المرحلة 3: فيديو الإعلان المتحرك (Stable Video Diffusion) ---
@@ -179,7 +178,7 @@ with col_output:
                             }
                         )
                         video_bytes = output_video.read()
-                        st.markdown("<div style='background-color: #ecfdf5; padding: 12px; border-radius: 8px; color: #065f46; font-weight: bold;'>🎥开启 ثالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</div>", unsafe_allow_html=True)
+                        st.markdown("<div style='background-color: #ecfdf5; padding: 12px; border-radius: 8px; color: #065f46; font-weight: bold;'>🎥 ثالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</div>", unsafe_allow_html=True)
                         st.video(video_bytes)
                         st.download_button(label="📥 تحميل الفيديو الإعلاني (MP4)", data=video_bytes, file_name=f"{shop_name}_ad_video.mp4", mime="video/mp4")
                     except Exception as e:
