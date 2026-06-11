@@ -12,6 +12,9 @@ MY_REPLICATE_KEY = os.environ.get("REPLICATE_API_TOKEN")
 # الربط الصريح والآمن للسيرفر السحابي لمنع أخطاء المصادقة
 client = genai.Client(api_key=MY_GEMINI_KEY)
 
+# الحل الجذري للـ 401: إنشاء عميل ريبليك ثابت وموثق لاستخدامه في كافة الدوال
+rep_client = replicate.Client(api_token=MY_REPLICATE_KEY)
+
 # ==========================================
 # 2. إعدادات واجهة المستخدم (Premium SaaS Theme)
 # ==========================================
@@ -22,7 +25,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# تصميم بصري متقدم ومريح للعين باستخدام CSS لموقع متكامل
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -59,7 +61,7 @@ with col_input:
         st.markdown("<h3 style='color: #059669; margin-top:0;'>📸 1. ارفع صورة منتجك الحقيقي</h3>", unsafe_allow_html=True)
         uploaded_file = st.file_uploader("قم بسحب وإفلات صورة منتجك هنا (JPG, PNG):", type=["png", "jpg", "jpeg"])
         if uploaded_file is not None:
-            st.image(uploaded_file, caption="صورة المنتج التي تم رفعها بنجاح", use_container_width=True)
+            st.image(uploaded_file, caption="صورة المنتج الأصلية المرفوعة", use_container_width=True)
 
     with st.container():
         st.markdown("<h3 style='color: #059669; margin-top:0;'>🎯 2. هندسة الهوية الإعلانية</h3>", unsafe_allow_html=True)
@@ -68,16 +70,16 @@ with col_input:
         
         col_sub1, col_sub2 = st.columns(2)
         with col_sub1:
-            platform = st.selectbox("📱 منصة النشر الرئيسية للحملة:", ["تيك توك (TikTok)", "انستغرام (Instagram)", "سناب شات (Snapchat)"])
+            platform = st.selectbox("📱 منصة النشر الرئيسية للحملة:", ["تيك توك (TikTok)", "انستغرام (Instagram)"])
         with col_sub2:
-            dialect = st.selectbox("🗣️ اللهجة التسويقية المطلوبة:", ["عامية سعودية الخليجية", "عامية مصرية خفيفة", "فصحى مبسطة وجذابة"])
+            dialect = st.selectbox("🗣️ اللهجة التسويقية المطلوبة:", ["عامية سعودية الخليجية", "عامية مصرية خفيفة"])
             
     with st.container():
         st.markdown("<h3 style='color: #059669; margin-top:0;'>🎵 3. الأجواء الموسيقية للإعلان</h3>", unsafe_allow_html=True)
         music_style = st.selectbox("🎼 اختر نوع ومود الموسيقى الخلفية للإعلان:", [
-            "موسيقى حماسية سريعة وعصرية (Energetic Modern Hip-Hop)",
-            "موسيقى فاخرة وهادئة للبراندات الراقية (Luxury Cinematic Corporate)",
-            "مغامرة وإثارة وإيقاعات شرقية حديثة (Arabic Tech Beats)"
+            "Energetic Modern Hip-Hop Beats",
+            "Luxury Cinematic Corporate Sound",
+            "Arabic Tech Beats with modern rhythms"
         ])
         st.write("")
         submit_btn = st.button("✨ ⚡ ابدأ إنتاج الحملة التسويقية المتكاملة")
@@ -103,13 +105,13 @@ with col_output:
 
                 image_url_string = None
 
-                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro) ---
+                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro عـبر rep_client الصارم) ---
                 st.write("")
                 with st.spinner("🖼️ ثانياً: جاري تشغيل ذكاء Flux لإنشاء صورة استوديو احترافية للمنتج..."):
                     try:
-                        output_image = replicate.run(
+                        # تشغيل الدالة مجبرة على استخدام الـ rep_client لمنع الـ 401
+                        output_image = rep_client.run(
                             "black-forest-labs/flux-2-pro",
-                            api_token=MY_REPLICATE_KEY,
                             input={
                                 "prompt": f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, cinematic lighting, 8k resolution",
                                 "resolution": "1 MP",
@@ -125,39 +127,38 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine) ---
+                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine عبر rep_client الصارم) ---
                 st.write("")
                 with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك الصورة إلى فيديو إعلاني قصير..."):
                     try:
                         input_for_video = image_url_string if image_url_string else uploaded_file
-                        output_video = replicate.run(
+                        
+                        # تشغيل دالة الفيديو مجبرة على الاعتماد الصريح للعميل لمنع الـ 401 للفيديو
+                        output_video = rep_client.run(
                             "luma/dream-machine",
-                            api_token=MY_REPLICATE_KEY,
                             input={
                                 "prompt": f"Cinematic slow motion camera movement around this product {product_name}, professional product advertisement video, commercial concept",
                                 "image": input_for_video
                             }
                         )
-                        st.markdown("<b style='color:#10B981;'>🎥 ثالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</b>", unsafe_allow_html=True)
+                        st.markdown("<b style='color:#10B981;'>🎥 rالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</b>", unsafe_allow_html=True)
                         st.video(output_video.read())
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
 
-                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (Meta MusicGen) ---
+                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (Meta MusicGen عبر rep_client الصارم) ---
                 st.write("")
                 with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي يناسب الحملة..."):
                     try:
-                        # استدعاء أقوى موديل توليد موسيقى من فيسبوك عبر ريبليك
-                        output_audio = replicate.run(
+                        # تشغيل دالة الصوت مجبرة على العميل الموثق لمنع الـ 401 للصوت
+                        output_audio = rep_client.run(
                             "meta/musicgen:7a76a825e58c11c5381117437a14be58d0dd99e3e3cf3e3870b92d6e4df46bc2",
-                            api_token=MY_REPLICATE_KEY,
                             input={
                                 "prompt": f"A commercial advertisement background music, {music_style}, high quality, loops, professional master, electronic beats",
-                                "duration": 8  # موسيقى قصيرة وحماسية تناسب الفيديوهات الإعلانية السريعة
+                                "duration": 8
                             }
                         )
                         st.markdown("<b style='color:#10B981;'>🎵 رابعاً: الموسيقى الإعلانية الحصرية المخصصة لمتجرك:</b>", unsafe_allow_html=True)
-                        # قراءة البايتات وعرض مشغل الصوت القابل للتحميل من التاجر
                         st.audio(output_audio.read())
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء توليد الموسيقى الإعلانية: {e}")
