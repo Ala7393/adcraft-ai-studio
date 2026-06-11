@@ -4,12 +4,12 @@ import replicate
 import os
 
 # ==========================================
-# 1. إعداد جلب مفاتيح الـ API بشكل آمن وصحيح 100%
+# 1. إعداد جلب مفاتيح الـ API بشكل آمن وصحيح
 # ==========================================
 MY_GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 MY_REPLICATE_KEY = os.environ.get("REPLICATE_API_TOKEN")
 
-# الربط الصريح والآمن لحل مشكلة الـ 401 والتأكيد للسيرفر
+# الربط الصريح والآمن للسيرفر السحابي
 client = genai.Client(api_key=MY_GEMINI_KEY)
 replicate_client = replicate.Client(api_token=MY_REPLICATE_KEY)
 
@@ -56,10 +56,10 @@ col_input, col_output = st.columns([1, 1.1], gap="large")
 
 with col_input:
     with st.container():
-        st.markdown("<h3 style='color: #1E3A8A; margin-top:0;'>📸 1. معرض صور...</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color: #1E3A8A; margin-top:0;'>📸 1. معرض صور المنتج</h3>", unsafe_allow_html=True)
         uploaded_file = st.file_uploader("قم بسحب وإفلات صورة منتجك هنا (JPG, PNG):", type=["png", "jpg", "jpeg"])
         if uploaded_file is not None:
-            st.image(uploaded_file, caption="الصورة الأصلية", use_container_width=True)
+            st.image(uploaded_file, caption="الصورة الأصلية المرفوعة للمنتج", use_container_width=True)
 
     with st.container():
         st.markdown("<h3 style='color: #1E3A8A; margin-top:0;'>🎯 2. هندسة الحملة الإعلانية</h3>", unsafe_allow_html=True)
@@ -87,25 +87,23 @@ with col_output:
         if submit_btn:
             if shop_name and product_name and uploaded_file is not None:
                 
-                # --- المرحلة 1: النص الإعلاني (استخدام التسمية الرسمية الصحيحة للمكتبة) ---
+                # --- المرحلة 1: النص الإعلاني (Gemini) ---
                 with st.spinner("✍️ جاري صياغة النص الإعلاني بأسلوب تسويقي..."):
                     system_prompt = f"أنت خبير تسويق محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
                     try:
-                        # التسمية الصحيحة المباشرة بدون بادئة لمنع خطأ 404
                         response = client.models.generate_content(model='gemini-2.5-flash', contents=system_prompt)
                         st.markdown("<b style='color:#10B981;'>✅ تم صياغة النص الإعلاني بنجاح:</b>", unsafe_allow_html=True)
                         st.text_area("📋 نص الإعلان الجاهز:", value=response.text, height=150)
                     except Exception as e:
                         st.error(f"خطأ في توليد النص: {e}")
 
-                final_image_url = None
+                final_image_bytes = None
 
-                # --- المرحلة 2: توليد الصورة بـ Flux الحقيقي عبر الـ Client المخصص لإلغاء الـ 401 ---
+                # --- المرحلة 2: توليد الصورة بـ Flux وقراءة بايتات الملف حقيقياً لإلغاء خطأ الـ format ---
                 if enhance_bg:
                     st.write("")
-                    with st.spinner("🖼️ جاري تشغيل ذكاء Flux لبناء الاستوديو الإعلاني..."):
+                    with st.spinner("🖼️ جاري تشغيل ذكاء Flux لبناء الاستوديو الإعلاني الفاخر..."):
                         try:
-                            # استخدام العميل الموثق لمنع مشاكل الصلاحيات
                             output_image = replicate_client.run(
                                 "black-forest-labs/flux-2-pro",
                                 input={
@@ -115,18 +113,20 @@ with col_output:
                                     "output_format": "webp"
                                 }
                             )
-                            final_image_url = output_image
+                            # الحل الجذري: قراءة بايتات كائن FileOutput مباشرة ليتم عرضها بسلام
+                            final_image_bytes = output_image.read()
                             st.markdown("<b style='color:#10B981;'>✅ تم توليد التصميم البصري بنجاح:</b>", unsafe_allow_html=True)
-                            st.image(final_image_url, caption="✨ النتيجة السينمائية الحقيقية", use_container_width=True)
+                            st.image(final_image_bytes, caption="✨ النتيجة السينمائية الحقيقية بذكاء Flux", use_container_width=True)
                         except Exception as e:
                             st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: تحويل صورة المنتج لفيديو متحرك ---
+                # --- المرحلة 3: تحويل صورة المنتج لفيديو متحرك حقيقي ---
                 if convert_to_video:
                     st.write("")
                     with st.spinner("🎥 جاري تحريك المشهد وضبط تأثيرات الكاميرا السينمائية..."):
                         try:
-                            image_to_animate = final_image_url if final_image_url else uploaded_file
+                            # نستخدم الصورة المولدة حديثاً أو ملف العميل الأصلي
+                            image_to_animate = final_image_bytes if final_image_bytes else uploaded_file.read()
                             output_video = replicate_client.run(
                                 "stability-ai/stable-video-diffusion:3f2d6c5b9f3b3920db22dee2905cc380e8e4544d6c5b9f3b3920db22dee2905cc380e",
                                 input={
@@ -135,7 +135,8 @@ with col_output:
                                 }
                             )
                             st.markdown("<b style='color:#10B981;'>✅ فيديو الإعلان القصير جاهز:</b>", unsafe_allow_html=True)
-                            st.video(output_video)
+                            # قراءة بايتات الفيديو لضمان عرضه بدون أخطاء السيرفر
+                            st.video(output_video.read())
                         except Exception as e:
                             st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
                             
