@@ -4,13 +4,14 @@ import replicate
 import os
 
 # ==========================================
-# 1. إعداد جلب مفاتيح الـ API بشكل آمن وصحيح
+# 1. إعداد جلب مفاتيح الـ API بشكل آمن وصحيح 100%
 # ==========================================
 MY_GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 MY_REPLICATE_KEY = os.environ.get("REPLICATE_API_TOKEN")
 
-# الربط الصريح والآمن للسيرفر السحابي
+# الربط الصريح والآمن للسيرفر السحابي لمنع الـ 401 والـ 404
 client = genai.Client(api_key=MY_GEMINI_KEY)
+replicate_client = replicate.Client(api_token=MY_REPLICATE_KEY)
 
 # ==========================================
 # 2. إعدادات واجهة المستخدم (التصميم العصري)
@@ -87,12 +88,12 @@ with col_output:
         if submit_btn:
             if shop_name and product_name and uploaded_file is not None:
                 
-                # --- المرحلة 1: النص الإعلاني (استخدام التسمية البديلة المستقرة لتجنب حصة الـ 429) ---
+                # --- المرحلة 1: النص الإعلاني (اسم الموديل المباشر الصحيح من قِبل المكتبة) ---
                 with st.spinner("✍️ جاري صياغة النص الإعلاني بأسلوب تسويقي..."):
                     system_prompt = f"أنت خبير تسويق محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
                     try:
-                        # تبديل ذكي لنموذج gemini-1.5-flash لضمان الحصة ومقاومة ضغط الفحص المتكرر
-                        response = client.models.generate_content(model='gemini-1.5-flash', contents=system_prompt)
+                        # التسمية الرسمية الصافية المباشرة لحل خطأ 404
+                        response = client.models.generate_content(model='gemini-2.5-flash', contents=system_prompt)
                         st.markdown("<b style='color:#10B981;'>✅ تم صياغة النص الإعلاني بنجاح:</b>", unsafe_allow_html=True)
                         st.text_area("📋 نص الإعلان الجاهز:", value=response.text, height=150)
                     except Exception as e:
@@ -100,15 +101,14 @@ with col_output:
 
                 image_url_string = None
 
-                # --- المرحلة 2: توليد الصورة بـ Flux وعرضها ---
+                # --- المرحلة 2: توليد الصورة بـ Flux وعرضها (عبر العميل الصريح والموثق) ---
                 if enhance_bg:
                     st.write("")
                     with st.spinner("🖼️ جاري تشغيل ذكاء Flux لبناء الاستوديو الإعلاني الفاخر..."):
                         try:
-                            # حل جذري: تمرير الـ token مباشرة داخل الدالة لمنع أي فقدان للمصادقة السحابية
-                            output_image = replicate.run(
+                            # الاستدعاء عبر العميل الصريح والآمن لمنع الـ 401
+                            output_image = replicate_client.run(
                                 "black-forest-labs/flux-2-pro",
-                                api_token=MY_REPLICATE_KEY,
                                 input={
                                     "prompt": f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, cinematic lighting, 8k resolution",
                                     "resolution": "1 MP",
@@ -124,18 +124,16 @@ with col_output:
                         except Exception as e:
                             st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: تحويل صورة المنتج لفيديو متحرك حقيقي بدون أخطاء مصادقة ---
+                # --- المرحلة 3: تحويل صورة المنتج لفيديو متحرك حقيقي (عبر العميل الصريح) ---
                 if convert_to_video:
                     st.write("")
                     with st.spinner("🎥 جاري تحريك المشهد وضبط تأثيرات الكاميرا السينمائية..."):
                         try:
-                            # استخدام الرابط النصي الصافي أو كائن الملف الصالح
                             input_for_video = image_url_string if image_url_string else uploaded_file
 
-                            # تمرير الـ token بشكل إجباري ومباشر هنا لحل مشكلة الـ 401 القاطعة للفيديو
-                            output_video = replicate.run(
+                            # استخدام replicate_client بشكل صارم لحل الـ 401 للفيديو
+                            output_video = replicate_client.run(
                                 "stability-ai/stable-video-diffusion:3f2d6c5b9f3b3920db22dee2905cc380e8e4544d6c5b9f3b3920db22dee2905cc380e",
-                                api_token=MY_REPLICATE_KEY,
                                 input={
                                     "input_image": input_for_video,
                                     "video_length": "14_frames_with_svd_xt"
