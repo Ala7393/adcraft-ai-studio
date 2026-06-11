@@ -9,19 +9,20 @@ import os
 MY_GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 MY_REPLICATE_KEY = os.environ.get("REPLICATE_API_TOKEN")
 
-# الربط الصريح والآمن للسيرفر السحابي لمنع الـ 401 والـ 404
+# الربط الصريح والآمن للسيرفر السحابي لمنع أخطاء المصادقة
 client = genai.Client(api_key=MY_GEMINI_KEY)
 
 # ==========================================
-# 2. إعدادات واجهة المستخدم (التصميم العصري)
+# 2. إعدادات واجهة المستخدم (Premium SaaS Theme)
 # ==========================================
 st.set_page_config(
-    page_title="AdCraft AI | استوديو التجار الذكي", 
-    page_icon="🎬", 
+    page_title="AdCraft AI Ultimate | استوديو التسويق الشامل", 
+    page_icon="🚀", 
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
+# تصميم بصري متقدم ومريح للعين باستخدام CSS لموقع متكامل
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -31,22 +32,22 @@ st.markdown("""
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 20px;
     }
     .stButton>button {
-        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
-        color: white !important; border-radius: 10px !important; padding: 14px 28px !important;
-        font-weight: 600 !important; font-size: 16px !important; width: 100% !important; border: none !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); transition: all 0.3s ease !important;
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: white !important; border-radius: 10px !important; padding: 16px 32px !important;
+        font-weight: 700 !important; font-size: 18px !important; width: 100% !important; border: none !important;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); transition: all 0.3s ease !important;
     }
-    .stButton>button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3); }
+    .stButton>button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3); }
     .stTextInput>div>div>input, .stSelectbox>div>div>div { border-radius: 8px !important; border: 1px solid #E2E8F0 !important; }
-    .stFileUploader { border: 2px dashed #CBD5E1 !important; border-radius: 12px !important; background-color: #F8FAFC !important; }
+    .stFileUploader { border: 2px dashed #10B981 !important; border-radius: 12px !important; background-color: #F8FAFC !important; }
     </style>
     """, unsafe_allow_html=True)
 
 st.markdown("""
     <div style='text-align: center; padding: 20px 0px;'>
-        <h1 style='color: #0F172A; font-size: 2.5rem; margin-bottom: 8px;'>🎬 استوديو AdCraft AI المحترف</h1>
-        <p style='color: #64748B; font-size: 1.1rem; max-width: 600px; margin: 0 auto;'>
-            حوّل صور منتجاتك العادية إلى حملات إعلانية مرئية ونصية متكاملة تضاعف مبيعاتك بضغطة زر.
+        <h1 style='color: #0F172A; font-size: 2.5rem; margin-bottom: 8px;'>🚀 استوديو AdCraft AI للتسويق الشامل</h1>
+        <p style='color: #64748B; font-size: 1.1rem; max-width: 700px; margin: 0 auto;'>
+            ارفع صورة منتجك فقط.. وشاهد السحر وهو يصنع حملة تسويقية كاملة (إعلان نصي + صورة استوديو + فيديو سينمائي متحرك + موسيقى حماسية خلفية)!
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -55,97 +56,113 @@ col_input, col_output = st.columns([1, 1.1], gap="large")
 
 with col_input:
     with st.container():
-        st.markdown("<h3 style='color: #1E3A8A; margin-top:0;'>📸 1. معرض صور المنتج</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color: #059669; margin-top:0;'>📸 1. ارفع صورة منتجك الحقيقي</h3>", unsafe_allow_html=True)
         uploaded_file = st.file_uploader("قم بسحب وإفلات صورة منتجك هنا (JPG, PNG):", type=["png", "jpg", "jpeg"])
         if uploaded_file is not None:
-            st.image(uploaded_file, caption="الصورة الأصلية المرفوعة للمنتج", use_container_width=True)
+            st.image(uploaded_file, caption="صورة المنتج التي تم رفعها بنجاح", use_container_width=True)
 
     with st.container():
-        st.markdown("<h3 style='color: #1E3A8A; margin-top:0;'>🎯 2. هندسة الحملة الإعلانية</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color: #059669; margin-top:0;'>🎯 2. هندسة الهوية الإعلانية</h3>", unsafe_allow_html=True)
         shop_name = st.text_input("🏪 اسم متجرك أو علامتك التجارية:", placeholder="مثال: لورا للأزياء")
-        product_name = st.text_input("📦 ما هو هذا المنتج؟ (الوصف):", placeholder="مثال: فستان سهرة فخم")
+        product_name = st.text_input("📦 ما هو هذا المنتج؟ (الوصف):", placeholder="مثال: عطر ملكي فاخر برائحة العود")
         
         col_sub1, col_sub2 = st.columns(2)
         with col_sub1:
-            platform = st.selectbox("📱 منصة الإعلان الرئيسية:", ["تيك توك (TikTok)", "انستغرام (Instagram)"])
+            platform = st.selectbox("📱 منصة النشر الرئيسية للحملة:", ["تيك توك (TikTok)", "انستغرام (Instagram)", "سناب شات (Snapchat)"])
         with col_sub2:
-            dialect = st.selectbox("🗣️ اللهجة الصوتية المستهدفة:", ["عامية سعودية الخليجية", "عامية مصرية خفيفة"])
-    
+            dialect = st.selectbox("🗣️ اللهجة التسويقية المطلوبة:", ["عامية سعودية الخليجية", "عامية مصرية خفيفة", "فصحى مبسطة وجذابة"])
+            
     with st.container():
-        st.markdown("<h3 style='color: #1E3A8A; margin-top:0;'>⚡ 3. الخدمات المطلوبة</h3>", unsafe_allow_html=True)
-        enhance_bg = st.checkbox("🖼️ توليد صورة استوديو إعلاني احترافي بذكاء Flux", value=True)
-        convert_to_video = st.checkbox("🎥 تحويل الصورة لفيديو سينمائي متحرك", value=False)
+        st.markdown("<h3 style='color: #059669; margin-top:0;'>🎵 3. الأجواء الموسيقية للإعلان</h3>", unsafe_allow_html=True)
+        music_style = st.selectbox("🎼 اختر نوع ومود الموسيقى الخلفية للإعلان:", [
+            "موسيقى حماسية سريعة وعصرية (Energetic Modern Hip-Hop)",
+            "موسيقى فاخرة وهادئة للبراندات الراقية (Luxury Cinematic Corporate)",
+            "مغامرة وإثارة وإيقاعات شرقية حديثة (Arabic Tech Beats)"
+        ])
         st.write("")
-        submit_btn = st.button("🚀 ابدأ المعالجة الذكية والإنتاج")
+        submit_btn = st.button("✨ ⚡ ابدأ إنتاج الحملة التسويقية المتكاملة")
 
 with col_output:
     with st.container():
-        st.markdown("<h3 style='color: #0F172A; margin-top:0;'>📋 استوديو المخرجات الاحترافية</h3>", unsafe_allow_html=True)
-        st.write("النتائج وحملاتك التسويقية ستظهر هنا فوراً.")
+        st.markdown("<h3 style='color: #0F172A; margin-top:0;'>📋 معرض الحملة التسويقية الجاهزة</h3>", unsafe_allow_html=True)
+        st.write("جميع مخرجات حملتك الاحترافية المجهزة للبيع ستظهر هنا فور الضغط على الزر.")
         st.write("---")
         
         if submit_btn:
             if shop_name and product_name and uploaded_file is not None:
                 
-                # --- المرحلة 1: النص الإعلاني (اسم الموديل المباشر الصحيح للمكتبة الفعالة) ---
-                with st.spinner("✍️ جاري صياغة النص الإعلاني بأسلوب تسويقي..."):
-                    system_prompt = f"أنت خبير تسويق محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
+                # --- المرحلة 1: النص التسويقي المقنع (Gemini) ---
+                with st.spinner("✍️ جاري صياغة النص الإعلاني الخاطف بأسلوب بشري..."):
+                    system_prompt = f"أنت خبير تسويق رقمي محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
                     try:
-                        # كتابة اسم الموديل مباشرة وبدون بادئة لحل خطأ 404
                         response = client.models.generate_content(model='gemini-2.5-flash', contents=system_prompt)
-                        st.markdown("<b style='color:#10B981;'>✅ تم صياغة النص الإعلاني بنجاح:</b>", unsafe_allow_html=True)
-                        st.text_area("📋 نص الإعلان الجاهز:", value=response.text, height=150)
+                        st.markdown("<b style='color:#10B981;'>📝 أولاً: نص الإعلان الجاهز للنسخ والنشر:</b>", unsafe_allow_html=True)
+                        st.text_area("📋 انسخ النص التسويقي من هنا:", value=response.text, height=140)
                     except Exception as e:
                         st.error(f"خطأ في توليد النص: {e}")
 
                 image_url_string = None
 
-                # --- المرحلة 2: توليد الصورة بـ Flux وعرضها حقيقياً ---
-                if enhance_bg:
-                    st.write("")
-                    with st.spinner("🖼️ جاري تشغيل ذكاء Flux لبناء الاستوديو الإعلاني الفاخر..."):
-                        try:
-                            # تمرير الـ token كمُعامل صريح مباشر لحل الـ 401 في السيرفرات السحابية
-                            output_image = replicate.run(
-                                "black-forest-labs/flux-2-pro",
-                                api_token=MY_REPLICATE_KEY,
-                                input={
-                                    "prompt": f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, cinematic lighting, 8k resolution",
-                                    "resolution": "1 MP",
-                                    "aspect_ratio": "1:1",
-                                    "output_format": "webp"
-                                }
-                            )
-                            image_url_string = str(output_image)
-                            final_image_bytes = output_image.read()
-                            
-                            st.markdown("<b style='color:#10B981;'>✅ تم توليد التصميم البصري بنجاح:</b>", unsafe_allow_html=True)
-                            st.image(final_image_bytes, caption="✨ النتيجة السينمائية الحقيقية بذكاء Flux", use_container_width=True)
-                        except Exception as e:
-                            st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
+                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro) ---
+                st.write("")
+                with st.spinner("🖼️ ثانياً: جاري تشغيل ذكاء Flux لإنشاء صورة استوديو احترافية للمنتج..."):
+                    try:
+                        output_image = replicate.run(
+                            "black-forest-labs/flux-2-pro",
+                            api_token=MY_REPLICATE_KEY,
+                            input={
+                                "prompt": f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, cinematic lighting, 8k resolution",
+                                "resolution": "1 MP",
+                                "aspect_ratio": "1:1",
+                                "output_format": "webp"
+                            }
+                        )
+                        image_url_string = str(output_image)
+                        final_image_bytes = output_image.read()
+                        
+                        st.markdown("<b style='color:#10B981;'>🖼️ ثانياً: البوستر الإعلاني الاحترافي لمنتجك:</b>", unsafe_allow_html=True)
+                        st.image(final_image_bytes, caption="✨ النتيجة الفوتوغرافية السينمائية بذكاء Flux", use_container_width=True)
+                    except Exception as e:
+                        st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: تحويل صورة المنتج لفيديو متحرك حقيقي (عبر نموذج Luma المستقر سحابياً) ---
-                if convert_to_video:
-                    st.write("")
-                    with st.spinner("🎥 جاري تحريك المشهد وضبط تأثيرات الكاميرا السينمائية المذهلة..."):
-                        try:
-                            input_for_video = image_url_string if image_url_string else uploaded_file
+                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine) ---
+                st.write("")
+                with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك الصورة إلى فيديو إعلاني قصير..."):
+                    try:
+                        input_for_video = image_url_string if image_url_string else uploaded_file
+                        output_video = replicate.run(
+                            "luma/dream-machine",
+                            api_token=MY_REPLICATE_KEY,
+                            input={
+                                "prompt": f"Cinematic slow motion camera movement around this product {product_name}, professional product advertisement video, commercial concept",
+                                "image": input_for_video
+                            }
+                        )
+                        st.markdown("<b style='color:#10B981;'>🎥 ثالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</b>", unsafe_allow_html=True)
+                        st.video(output_video.read())
+                    except Exception as e:
+                        st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
 
-                            # التبديل النهائي لنموذج Luma مع تمرير الـ token الصريح لمنع الـ 401 للفيديو
-                            output_video = replicate.run(
-                                "luma/dream-machine",
-                                api_token=MY_REPLICATE_KEY,
-                                input={
-                                    "prompt": f"Cinematic slow motion camera movement around this product {product_name}, professional product advertisement video, commercial concept",
-                                    "image": input_for_video
-                                }
-                            )
-                            st.markdown("<b style='color:#10B981;'>✅ فيديو الإعلان القصير جاهز:</b>", unsafe_allow_html=True)
-                            st.video(output_video.read())
-                        except Exception as e:
-                            st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
+                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (Meta MusicGen) ---
+                st.write("")
+                with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي يناسب الحملة..."):
+                    try:
+                        # استدعاء أقوى موديل توليد موسيقى من فيسبوك عبر ريبليك
+                        output_audio = replicate.run(
+                            "meta/musicgen:7a76a825e58c11c5381117437a14be58d0dd99e3e3cf3e3870b92d6e4df46bc2",
+                            api_token=MY_REPLICATE_KEY,
+                            input={
+                                "prompt": f"A commercial advertisement background music, {music_style}, high quality, loops, professional master, electronic beats",
+                                "duration": 8  # موسيقى قصيرة وحماسية تناسب الفيديوهات الإعلانية السريعة
+                            }
+                        )
+                        st.markdown("<b style='color:#10B981;'>🎵 رابعاً: الموسيقى الإعلانية الحصرية المخصصة لمتجرك:</b>", unsafe_allow_html=True)
+                        # قراءة البايتات وعرض مشغل الصوت القابل للتحميل من التاجر
+                        st.audio(output_audio.read())
+                    except Exception as e:
+                        st.error(f"حدث خطأ أثناء توليد الموسيقى الإعلانية: {e}")
                             
             elif uploaded_file is None:
-                st.warning("⚠️ من فضلك قم برفع صورة المنتج أولاً لبدء المعالجة البصرية.")
+                st.warning("⚠️ من فضلك قم برفع صورة المنتج أولاً لبدء الإنتاج البصري.")
             else:
                 st.warning("⚠️ يرجى ملء البيانات الأساسية أولاً للبدء.")
