@@ -122,18 +122,17 @@ with col_output:
         if submit_btn:
             if shop_name and product_name and uploaded_file is not None:
                 
-                # --- المرحلة 1: النص التسويقي المقنع (Gemini) ---
+                # --- 📝 المرحلة 1: النص التسويقي المقنع (Gemini) ---
                 with st.spinner("✍️ جاري صياغة النص الإعلاني الخاطف بأسلوب بشرّي..."):
                     system_prompt = f"أنت خبير تسويق رقمي محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
                     response = client.models.generate_content(model='gemini-2.5-flash', contents=system_prompt)
                     st.markdown("<div style='background-color: #ecfdf5; padding: 12px; border-radius: 8px; color: #065f46; font-weight: bold;'>📝 أولاً: نص الإعلان الجاهز للنشر:</div>", unsafe_allow_html=True)
                     st.text_area("📋 انسخ النص التسويقي من هنا:", value=response.text, height=140)
 
+                # --- 🖼️ المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro) ---
                 image_url_string = None
                 flux_prompt = f"A high-end luxury professional commercial product photography of {product_name} from {shop_name}, placed beautifully on a polished studio table, cinematic lighting, 8k resolution"
-
-                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro) ---
-                st.write("")
+                
                 with st.spinner("🖼️ ثانياً: جاري تشغيل ذكاء Flux لإنشاء صورة استوديو احترافية..."):
                     output_image = rep_client.run(
                         "black-forest-labs/flux-2-pro",
@@ -150,13 +149,13 @@ with col_output:
                     st.image(final_image_bytes, caption="✨ النتيجة الفوتوغرافية السينمائية بذكاء Flux", use_container_width=True)
                     st.download_button(label="📥 تحميل البوستر بجودة عالية", data=final_image_bytes, file_name=f"{shop_name}_product.webp", mime="image/webp", key="download_poster_btn")
 
-                # زيادة الفاصل الزمن لتفادي الـ 429 من ريبليك
+                # تأخير زمني لحماية قنوات الاتصال
                 time.sleep(5.0)
 
-                # --- المرحلة 3: فيديو الإعلان المتحرك (Stable Video Diffusion) ---
-                st.write("")
+                # --- 🎥 المرحلة 3: فيديو الإعلان المتحرك (Stable Video Diffusion) ---
+                input_for_video = image_url_string if image_url_string else uploaded_file
+                
                 with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك البوستر إلى فيديو إعلاني قصير..."):
-                    input_for_video = image_url_string if image_url_string else uploaded_file
                     output_video = rep_client.run(
                         "stability-ai/stable-video-diffusion",
                         input={
@@ -169,11 +168,13 @@ with col_output:
                     st.video(video_bytes)
                     st.download_button(label="📥 تحميل الفيديو الإعلاني (MP4)", data=video_bytes, file_name=f"{shop_name}_ad_video.mp4", mime="video/mp4", key="download_video_btn")
 
-                # زيادة الفاصل الزمني النهائي لضمان مرور تراك الموسيقى بدون حظر
+                # تأخير زمني لحماية قنوات الاتصال
                 time.sleep(5.0)
-                audio_prompt = f"A commercial advertisement background music, {music_style}, high quality, loops, professional master, electronic beats"
 
-                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (MusicGen) ---
-                st.write("")
+                # --- 🎵 المرحلة 4: الموسيقى الإعلانية المتوافقة (MusicGen) ---
+                audio_prompt = f"A commercial advertisement background music, {music_style}, high quality, loops, professional master, electronic beats"
+                
                 with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي مخصص للحملة..."):
                     output_audio = rep_client.run(
+                        "meta/musicgen",
+                        input={
