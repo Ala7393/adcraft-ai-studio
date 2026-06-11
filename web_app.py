@@ -32,7 +32,7 @@ st.markdown("""
     .stApp { background-color: #f8fafc; }
     h1, h2, h3, p, span, button { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important; }
     div[data-testid="stVerticalBlock"] > div {
-        background-color: #ffffff; padding: 26px; border-radius: 20px;
+        background-color: #ffffff; padding: 24px; border-radius: 20px;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
         margin-bottom: 24px; border: 1px solid #f1f5f9;
     }
@@ -158,7 +158,7 @@ with col_output:
                         final_image_bytes = output_image.read()
                         st.markdown("<div style='background-color: #ecfdf5; padding: 12px; border-radius: 8px; color: #065f46; font-weight: bold;'>🖼️ ثانياً: البوستر الإعلاني الاحترافي لمنتجك:</div>", unsafe_allow_html=True)
                         st.image(final_image_bytes, caption="✨ النتيجة الفوتوغرافية السينمائية بذكاء Flux", use_container_width=True)
-                        st.download_button(label="📥 تحميل البوستر بجودة عالية", data=final_image_bytes, file_name=f"{shop_name}_product.webp", mime="image/webp")
+                        st.download_button(label="📥 تحميل البوستر بجودة عالية", data=final_image_bytes, file_name=f"{shop_name}_product.webp", mime="image/webp", key="download_poster_btn")
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
@@ -180,5 +180,5 @@ with col_output:
                         video_bytes = output_video.read()
                         st.markdown("<div style='background-color: #ecfdf5; padding: 12px; border-radius: 8px; color: #065f46; font-weight: bold;'>🎥 ثالثاً: فيديو الإعلان المتحرك والسينمائي للمنتج:</div>", unsafe_allow_html=True)
                         st.video(video_bytes)
-                        st.download_button(label="📥 تحميل الفيديو الإعلاني (MP4)", data=video_bytes, file_name=f"{shop_name}_ad_video.mp4", mime="video/mp4")
+                        st.download_button(label="📥 تحميل الفيديو الإعلاني (MP4)", data=video_bytes, file_name=f"{shop_name}_ad_video.mp4", mime="video/mp4", key="download_video_btn")
                     except Exception as e:
