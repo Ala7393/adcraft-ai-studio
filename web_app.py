@@ -6,7 +6,6 @@ import os
 # =======================================================
 # 1. جلب المفاتيح الصافية والآمنة من خزنة السيرفر السحابي
 # =======================================================
-# هذا التعديل يسمح بجعل مستودع GitHub عاماً (Public) بأمان تام 100%
 MY_GEMINI_KEY = st.secrets["GEMINI_API_KEY"]
 MY_REPLICATE_KEY = st.secrets["REPLICATE_API_TOKEN"]
 
@@ -97,8 +96,8 @@ with col_output:
         if submit_btn:
             if shop_name and product_name and uploaded_file is not None:
                 
-                # --- المرحلة 1: النص التسويقي المقنع (Gemini 2.5 المستقر) ---
-                with st.spinner("✍️ جاري صياغة النص الإعلاني الخاطف بأسلوب بشري..."):
+                # --- المرحلة 1: النص التسويقي المقنع (Gemini) ---
+                with st.spinner("✍️ جاري صياغة النص الإعلاني الخاطف بأسلوب بشرّي..."):
                     system_prompt = f"أنت خبير تسويق رقمي محترف. اكتب نص إعلاني لـ {platform} باسم {shop_name} عن منتج {product_name} بلهجة {dialect}."
                     try:
                         response = client.models.generate_content(model='gemini-2.5-flash', contents=system_prompt)
@@ -109,7 +108,7 @@ with col_output:
 
                 image_url_string = None
 
-                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro عـبر rep_client الموثق) ---
+                # --- المرحلة 2: استوديو الصور الفاخر (Flux-2 Pro) ---
                 st.write("")
                 with st.spinner("🖼️ ثانياً: جاري تشغيل ذكاء Flux لإنشاء صورة استوديو احترافية للمنتج..."):
                     try:
@@ -130,7 +129,7 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء معالجة الصورة في سيرفر ريبليك: {e}")
 
-                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine عبر rep_client الموثق) ---
+                # --- المرحلة 3: فيديو الإعلان المتحرك (Luma Dream Machine) ---
                 st.write("")
                 with st.spinner("🎥 ثالثاً: جاري بث الحياة وتحريك الصورة إلى فيديو إعلاني قصير..."):
                     try:
@@ -148,12 +147,13 @@ with col_output:
                     except Exception as e:
                         st.error(f"حدث خطأ أثناء تحويل صورة منتجك إلى فيديو: {e}")
 
-                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (Meta MusicGen عبر rep_client الموثق) ---
+                # --- المرحلة 4: الموسيقى الإعلانية المتوافقة (تعديل استدعاء الموديل الصافي المحدث) ---
                 st.write("")
                 with st.spinner("🎵 رابعاً: جاري عزف وتوليد تراك موسيقي تجاري خلفي يناسب الحملة..."):
                     try:
+                        # تصحيح برمت الاستدعاء للرابط الصافي الرسمي لمنع الـ 422
                         output_audio = rep_client.run(
-                            "meta/musicgen:7a76a825e58c11c5381117437a14be58d0dd99e3e3cf3e3870b92d6e4df46bc2",
+                            "meta/musicgen",
                             input={
                                 "prompt": f"A commercial advertisement background music, {music_style}, high quality, loops, professional master, electronic beats",
                                 "duration": 8
